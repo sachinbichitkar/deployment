@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Restaurant Picker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    .spinner-container {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      margin: 0 auto;
+    }
+    .spinner {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      position: relative;
+      transform: rotate(0deg);
+      transition: transform 3s ease-out;
+    }
+    .slice {
+      position: absolute;
+      width: 150px;
+      height: 300px;
+      transform-origin: 100% 50%;
+      clip-path: polygon(0 0, 100% 50%, 0 100%);
+    }
+    .label {
+      position: absolute;
+      width: 150px;
+      height: 40px;
+      text-align: center;
+      line-height: 20px;
+      color: white;
+      font-weight: bold;
+      transform-origin: 100% 50%;
+      pointer-events: none;
+    }
+    #pointer {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 30px solid red;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+    #spinBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      color: white;
+      background: #0077b6;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #spinBtn:hover {
+      background: #0096c7;
+    }
+    .result {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="spinner-container">
+    <div id="pointer"></div>
+    <div class="spinner" id="spinner"></div>
+  </div>
+  <button id="spinBtn">Spin</button>
+  <div class="result" id="result"></div>
+
+  <script>
+    const spinner = document.getElementById("spinner");
+    const result = document.getElementById("result");
+    const spinBtn = document.getElementById("spinBtn");
+    let currentRotation = 0;
+    let restaurants = []; // Will store the restaurant data
+
+    // Fetch data from JSON file
+    fetch("restaurants.json")
+      .then(response => response.json())
+      .then(data => {
+        restaurants = data;
+        createSlices(restaurants);
+      })
+      .catch(error => console.error("Error fetching JSON:", error));
+
+    function createSlices(data) {
+      const anglePerSlice = 360 / data.length;
+
+      data.forEach((item, index) => {
+        // Create slice
+        const slice = document.createElement("div");
+        slice.className = "slice";
+        slice.style.background = item.color;
+        slice.style.transform = `rotate(${index * anglePerSlice}deg)`;
+        spinner.appendChild(slice);
+
+        // Create label
+        const label = document.createElement("div");
+        label.className = "label";
+        label.style.transform = `rotate(${index * anglePerSlice + anglePerSlice / 2}deg) translate(70px)`;
+        label.textContent = item.name;
+        spinner.appendChild(label);
+      });
+    }
+
+    spinBtn.addEventListener("click", () => {
+      if (restaurants.length === 0) return;
+
+      const randomAngle = Math.floor(Math.random() * 360) + 720; // At least 2 full rotations
+      currentRotation += randomAngle;
+      spinner.style.transition = "transform 3s ease-out";
+      spinner.style.transform = `rotate(${currentRotation}deg)`;
+
+      const anglePerSlice = 360 / restaurants.length;
+      const selectedIndex = Math.floor(((360 - (currentRotation % 360)) % 360) / anglePerSlice);
+
+      setTimeout(() => {
+        const selectedRestaurant = restaurants[selectedIndex];
+        result.textContent = `Selected: ${selectedRestaurant.name}`;
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
