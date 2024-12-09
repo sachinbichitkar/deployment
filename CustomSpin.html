@@ -4,100 +4,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Restaurant Picker</title>
+  <title>Dynamic Jackpot Wheel</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      margin-top: 50px;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
     }
 
-    .spinner-container {
+    .wheel-container {
       position: relative;
-      width: 360px;
-      height: 360px;
-      margin: 0 auto;
+      width: 300px;
+      height: 300px;
+      margin: 50px auto;
     }
 
-    .spinner {
-      width: 350px;
-      height: 350px;
+    .wheel {
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
       position: relative;
-      transform: rotate(0deg);
-      transition: transform 3s ease-out;
-      will-change: transform;
-      overflow: hidden;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      transition: transform 5s ease-out;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    .slice {
+    .wheel span {
       position: absolute;
-      width: 175px;
-      height: 350px;
-      transform-origin: 100% 50%;
-      clip-path: polygon(0 0, 100% 50%, 0 100%);
-      border: 1px solid #fff;
-    }
-
-    .label {
-      position: absolute;
-      width: 100px;
-      /* Ensure consistent width */
-      height: auto;
-      text-align: center;
-      line-height: 1.2;
-      /* Adjust line height for better readability */
-      color: white;
-      font-weight: bold;
-      font-size: 12px;
-      transform-origin: 0 50%;
-      /* Align origin to prevent distortions */
-      pointer-events: none;
-      z-index: 2;
-      /* Ensure it appears above the slices */
-      background-color: rgba(0, 0, 0, 0.5);
-      /* Semi-transparent background for contrast */
-      border-radius: 4px;
-    }
-
-    .centre {
-      z-index: 2;
-      top: 42%;
-      left: calc(50% - 30px);
-      height: 50px;
-      width: 50px;
-      border-radius: 50%;
-      position: absolute;
-      background-color: whitesmoke;
-    }
-
-    #pointer {
-      position: absolute;
-      top: -20px;
+      top: 50%;
       left: 50%;
-      width: 0;
-      height: 0;
-      border-left: 20px solid transparent;
-      border-right: 20px solid transparent;
-      border-bottom: 40px solid red;
-      transform: translateX(-50%);
-      z-index: 10;
+      transform-origin: 0 0;
+      transform: translate(-50%, -50%);
+      font-size: 14px;
+      font-weight: bold;
     }
 
-    #spinBtn {
+    .spin-btn {
       margin-top: 20px;
-      padding: 12px 25px;
-      font-size: 18px;
-      color: white;
-      background: #0077b6;
+      padding: 10px 20px;
+      background: #007bff;
+      color: #fff;
       border: none;
       border-radius: 5px;
       cursor: pointer;
     }
 
-    #spinBtn:hover {
-      background: #0096c7;
+    .spin-btn:hover {
+      background: #0056b3;
+    }
+
+    .pointer {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      background: red;
+      clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+      transform: translateX(-50%);
+    }
+
+    .text-label{
+      position: absolute;
+      width: 100px;
+      text-align: center;
+      line-height: 20px;
+      color: white;
+      font-weight: bold;
+      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+      font-size: 12px !important;
+      border-radius: 4px;
+      transform-origin: 0 50%; /* Fix rotation */
+      z-index: 1; /* Ensure it appears on top of slices */
+      pointer-events: none;
     }
 
     .result {
@@ -106,79 +88,76 @@
       font-weight: bold;
     }
   </style>
-
 </head>
 
 <body>
-  <div class="spinner-container">
-    <div id="pointer"></div>
-    <div class="centre"></div>
-    <div class="spinner" id="spinner"></div>
+  <div class="wheel-container">
+    <div class="pointer"></div>
+    <div class="wheel" id="wheel"></div>
   </div>
-  <button id="spinBtn">Spin</button>
+  <button class="spin-btn" id="spinBtn">Spin</button>
   <div class="result" id="result"></div>
 
   <script>
-    const spinner = document.getElementById("spinner");
+    const wheel = document.getElementById("wheel");
     const result = document.getElementById("result");
     const spinBtn = document.getElementById("spinBtn");
+    let isSpinning = false;
     let currentRotation = 0;
-    let restaurants = [];
+
     fetch("restaurants.json")
-      .then(response => response.json())
-      .then(data => {
-        restaurants = data;
-        createSlices(restaurants);
+      .then((response) => response.json())
+      .then((data) => {
+        const sections = data.sections;
+        if (!sections || sections.length === 0) {
+          alert("No data found in JSON!");
+          return;
+        }
+        const totalSections = sections.length;
+        const angle = 360 / totalSections;
+
+        const gradient = sections
+          .map(
+            (section, index) =>
+              `${section.color} ${index * angle}deg ${(index + 1) * angle}deg`
+          )
+          .join(", ");
+        wheel.style.background = `conic-gradient(${gradient})`;
+
+        // Add section labels
+        sections.forEach((section, index) => {
+          const span = document.createElement("span");
+          console.log(`angle ${angle} index ${index}`);
+          span.style.transform = `rotate(${angle * index}deg) translate(0, -130px)`;
+          span.innerText = section.label;
+          span.className = 'text-label';
+          wheel.appendChild(span);
+        });
       })
-      .catch(error => console.error("Error fetching JSON:", error));
-
-    function createSlices(data) {
-      const anglePerSlice = 360 / data.length;
-
-      data.forEach((item, index) => {
-        // Create a wrapper for slice and label
-        const sliceWrapper = document.createElement("div");
-        sliceWrapper.style.position = "absolute";
-        sliceWrapper.style.width = "100%";
-        sliceWrapper.style.height = "100%";
-        sliceWrapper.style.transform = `rotate(${index * anglePerSlice}deg)`;
-
-        // Create slice
-        const slice = document.createElement("div");
-        slice.className = "slice";
-        slice.style.background = item.color;
-        slice.style.transform = `rotate(${anglePerSlice / 2}deg)`; // Rotate to align slices
-        sliceWrapper.appendChild(slice);
-
-        // Create label
-        const label = document.createElement("div");
-        label.className = "label";
-        label.textContent = item.name;
-
-        // Move label outward and rotate it back to stay horizontal
-        //label.style.transform = `translate(165px) rotate(-${anglePerSlice / 2}deg)`; // Adjust translate distance
-        sliceWrapper.appendChild(label);
-
-        // Append wrapper to spinner
-        spinner.appendChild(sliceWrapper);
+      .catch((error) => {
+        console.error("Error loading JSON data:", error);
+        alert("Failed to load wheel data.");
       });
-    }
 
     spinBtn.addEventListener("click", () => {
-      if (restaurants.length === 0) return;
+      if (isSpinning) return;
+      isSpinning = true;
 
-      const randomAngle = Math.floor(Math.random() * 360) + 720; // At least 2 full rotations
-      currentRotation += randomAngle;
-      spinner.style.transition = "transform 3s ease-out";
-      spinner.style.transform = `rotate(${currentRotation}deg)`;
+      const randomDegree = Math.floor(Math.random() * 360) + 3600; // At least 10 spins
+      currentRotation += randomDegree;
 
-      const anglePerSlice = 360 / restaurants.length;
-      const selectedIndex = Math.floor(((360 - (currentRotation % 360)) % 360) / anglePerSlice);
+      wheel.style.transform = `rotate(${currentRotation}deg)`;
 
       setTimeout(() => {
-        const selectedRestaurant = restaurants[selectedIndex];
-        result.textContent = `Selected: ${selectedRestaurant.name}`;
-      }, 3000);
+        isSpinning = false;
+        const sections = wheel.querySelectorAll("span");
+        const totalSections = sections.length;
+        const normalizedRotation = currentRotation % 360;
+        const sectionAngle = 360 / totalSections;
+        const winningIndex = Math.floor((360 - normalizedRotation) / sectionAngle) % totalSections;
+
+        result.textContent = `${sections[winningIndex].innerText}`;
+      }, 5000);
     });
   </script>
 </body>

@@ -1,9 +1,24 @@
-[
-    { "name": "Pranjal", "color": "#f4a261" },
-    { "name": "Hotel Ganesh", "color": "#e76f51" },
-    { "name": "Trimurti", "color": "#2a9d8f" },
-    { "name": "Dhanashri", "color": "#264653" },
-    { "name": "Pravin Mama", "color": "#8d99ae" },
-    { "name": "Shriram veg", "color": "#d4a5a5" }
+{
+  "sections": [
+    {
+      "label": "Pranjal",
+      "color": "#33FFBD"
+    },
+    {
+      "label": "Hotel Ganesh",
+      "color": "#33D4FF"
+    },
+    {
+      "label": "Trimurti",
+      "color": "#338BFF"
+    },
+    {
+      "label": "Dhanashri",
+      "color": "#6A33FF"
+    },
+    {
+      "label": "Shriram veg",
+      "color": "#9A33FF"
+    }
   ]
-  
+}
