@@ -2,22 +2,27 @@
   "sections": [
     {
       "label": "Pranjal",
+      "type": "Veg",
       "color": "#F1C40F"
     },
     {
       "label": "Hotel Ganesh",
+      "type": "Veg",
       "color": "#E74C3C"
     },
     {
       "label": "Trimurti",
+      "type": "Non-Veg",
       "color": "#3498DB"
     },
     {
       "label": "Dhanashri",
+      "type": "Non-Veg",
       "color": "#2ECC71"
     },
     {
-      "label": "Shriram veg",
+      "label": "Shriram Veg",
+      "type": "Veg",
       "color": "#9B59B6"
     }
   ]

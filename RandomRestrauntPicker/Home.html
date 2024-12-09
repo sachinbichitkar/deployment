@@ -8,13 +8,12 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      text-align: center;
       margin: 0;
       padding: 0;
       background: #f4f4f4;
-      background-image: url('./background.jpg');  /* Set the image URL */
-      background-size: cover;  /* Cover the entire div */
-      background-position: center;  /* Center the image */
+      background-image: url('./background.jpg');
+      background-size: cover;
+      background-position: center;
       background-repeat: no-repeat;
     }
 
@@ -49,32 +48,30 @@
     }
 
     .spin-btn {
-  margin-top: 20px;
-  padding: 8px 16px;
-  background: rgba(51, 51, 51, 0.8);  /* Dark background with transparency */
-  color: #fff;  /* White text */
-  border: 2px solid rgba(255, 255, 255, 0.701);  /* Light white border with some transparency */
-  border-radius: 8px;  /* Rounded corners */
-  font-size: 16px;  /* Larger font */
-  font-weight: bold;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Subtle shadow */
-  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;  /* Smooth transitions */
-  cursor: pointer;
-}
+      margin-top: 20px;
+      padding: 8px 16px;
+      background: rgba(51, 51, 51, 0.8);
+      color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.701);
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+      cursor: pointer;
+    }
 
-.spin-btn:hover {
-  background: rgba(51, 51, 51, 0.9);  /* Slightly more opaque on hover */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);  /* Stronger shadow on hover */
-  border: 2px solid hsla(0, 0%, 100%, 0.9);  /* Increase border opacity on hover */
-}
+    .spin-btn:hover {
+      background: rgba(51, 51, 51, 0.9);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      border: 2px solid hsla(0, 0%, 100%, 0.9);
+    }
 
-.spin-btn:active {
-  background: rgba(51, 51, 51, 1);  /* Fully opaque when clicked */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* Slight shadow on click */
-  border: 2px solid hsla(0, 0%, 100%, 0.9);  /* More pronounced white border on click */
-}
-
-
+    .spin-btn:active {
+      background: rgba(51, 51, 51, 1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border: 2px solid hsla(0, 0%, 100%, 0.9);
+    }
 
     .pointer {
       position: absolute;
@@ -87,98 +84,213 @@
       transform: translateX(-50%);
     }
 
-    .text-label{
+    .text-label {
       position: absolute;
       width: 100px;
       text-align: center;
       line-height: 20px;
       color: white;
       font-weight: bold;
-      background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+      background-color: rgba(0, 0, 0, 0.5);
       font-size: 12px !important;
       border-radius: 4px;
-      transform-origin: 0 50%; /* Fix rotation */
-      z-index: 1; /* Ensure it appears on top of slices */
+      transform-origin: 0 50%;
+      z-index: 1;
       pointer-events: none;
     }
 
     .result {
-      margin-top: 20px;
+      margin: 20px;
       font-size: 24px;
+      height: 24px;
       font-weight: bold;
       color: whitesmoke;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .dropdown-button:hover {
+      background-color: #0056b3;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 125px;
+      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+      border-radius: 5px;
+      margin-top: 5px;
+    }
+
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #ddd;    border-radius: 5px;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown:hover .dropdown-button {
+      background-color: #0056b3;
+    }
+
+    .display-container{
+      text-align: center;
+    }
+    .main-container{
+      display: flex;
+    flex-direction: row-reverse;
+      text-align: center;
+      margin-right: 48px;
     }
   </style>
 </head>
 
 <body>
+  <div class="main-container">
+  <div class="dropdown" id="dropdown">
+    <button class="spin-btn" id="dropdownButton">Select Type</button>
+    <div class="dropdown-content" id="dropdownContent">
+    </div>
+  </div>
+</div>
   <div class="wheel-container">
     <div class="pointer"></div>
     <div class="wheel" id="wheel"></div>
   </div>
+  <div class="display-container">
   <button class="spin-btn" id="spinBtn">Spin</button>
   <div class="result" id="result"></div>
-
+</div>
   <script>
-    const wheel = document.getElementById("wheel");
-    const result = document.getElementById("result");
-    const spinBtn = document.getElementById("spinBtn");
-    let isSpinning = false;
-    let currentRotation = 0;
+    document.addEventListener("DOMContentLoaded", function () {
+      const wheel = document.getElementById("wheel");
+      const result = document.getElementById("result");
+      const spinBtn = document.getElementById("spinBtn");
+      let isSpinning = false;
+      let currentRotation = 0;
 
-    fetch("restaurants.json")
-      .then((response) => response.json())
-      .then((data) => {
-        const sections = data.sections;
-        if (!sections || sections.length === 0) {
-          alert("No data found in JSON!");
-          return;
-        }
-        const totalSections = sections.length;
-        const angle = 360 / totalSections;
+      function toggleDropdown() {
+        const dropdownContent = document.getElementById('dropdownContent');
+        dropdownContent.style.display = dropdownContent.style.display === "block" ? "none" : "block";
+      }
+      function getData(type) {
+        fetch("restaurants.json")
+          .then((response) => response.json())
+          .then((data) => {
+            if (type) {
+              if (type && (type === "All")) {
 
-        const gradient = sections
-          .map(
-            (section, index) =>
-              `${section.color} ${index * angle}deg ${(index + 1) * angle}deg`
-          )
-          .join(", ");
-        wheel.style.background = `conic-gradient(${gradient})`;
+              } else
+                data.sections = data.sections.filter(option => option.type === type);
+            }
+            const sections = data.sections;
 
-        // Add section labels
-        sections.forEach((section, index) => {
-          const span = document.createElement("span");
-          console.log(`angle ${angle} index ${index}`);
-          span.style.transform = `rotate(${angle * index}deg) translate(0, -130px)`;
-          span.innerText = section.label;
-          span.className = 'text-label';
-          wheel.appendChild(span);
-        });
-      })
-      .catch((error) => {
-        console.error("Error loading JSON data:", error);
-        alert("Failed to load wheel data.");
+            if (!sections || sections.length === 0) {
+              alert("No data found in JSON!");
+              return;
+            }
+            wheel.innerText = "";
+            const totalSections = sections.length;
+            const angle = 360 / totalSections;
+            const gradient = sections
+              .map(
+                (section, index) =>
+                  `${section.color} ${index * angle}deg ${(index + 1) * angle}deg`
+              )
+              .join(", ");
+
+            wheel.style.background = `conic-gradient(${gradient})`;
+
+            sections.forEach((section, index) => {
+              const span = document.createElement("span");
+              console.log(`angle ${angle} index ${index}`);
+              span.style.transform = `rotate(${angle * index}deg) translate(0, -130px)`;
+              span.innerText = section.label;
+              span.className = 'text-label';
+              wheel.appendChild(span);
+            });
+          })
+          .catch((error) => {
+            console.error("Error loading JSON data:", error);
+            alert("Failed to load wheel data.");
+          });
+      }
+      document.getElementById('dropdownButton').addEventListener('click', toggleDropdown);
+      spinBtn.addEventListener("click", () => {
+        if (isSpinning) return;
+        isSpinning = true;
+
+        const randomDegree = Math.floor(Math.random() * 360) + 3600;
+        currentRotation += randomDegree;
+        wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+        setTimeout(() => {
+          isSpinning = false;
+          const sections = wheel.querySelectorAll("span");
+          const totalSections = sections.length;
+          const normalizedRotation = currentRotation % 360;
+          const sectionAngle = 360 / totalSections;
+          const winningIndex = Math.floor((360 - normalizedRotation) / sectionAngle) % totalSections;
+          result.textContent = `${sections[winningIndex].innerText}`;
+        }, 5000);
       });
 
-    spinBtn.addEventListener("click", () => {
-      if (isSpinning) return;
-      isSpinning = true;
+      function loadDropdown() {
 
-      const randomDegree = Math.floor(Math.random() * 360) + 3600; // At least 10 spins
-      currentRotation += randomDegree;
+        const dropdownContent = document.getElementById('dropdownContent');
+        dropdownContent.innerHTML = '';
 
-      wheel.style.transform = `rotate(${currentRotation}deg)`;
-
-      setTimeout(() => {
-        isSpinning = false;
-        const sections = wheel.querySelectorAll("span");
-        const totalSections = sections.length;
-        const normalizedRotation = currentRotation % 360;
-        const sectionAngle = 360 / totalSections;
-        const winningIndex = Math.floor((360 - normalizedRotation) / sectionAngle) % totalSections;
-
-        result.textContent = `${sections[winningIndex].innerText}`;
-      }, 5000);
+        fetch("restaurants.json")
+          .then((response) => response.json())
+          .then((data) => {
+            const sections = Array.from(
+              new Map(data.sections.map(option => [option.type, option])).values()
+            );
+            if (!sections || sections.length === 0) {
+              alert("No data found in JSON!");
+              return;
+            }
+            sections.unshift({ type: "All" });
+            sections.forEach(obj => {
+              const anchor = document.createElement('a');
+              anchor.href = "#";
+              anchor.innerText = obj.type;
+              anchor.addEventListener('click', () => {
+                getData(obj.type);
+                toggleDropdown();
+              });
+              dropdownContent.appendChild(anchor);
+            });
+          })
+          .catch((error) => {
+            console.error("Error loading JSON data:", error);
+            alert("Failed to load wheel data.");
+          });
+      }
+      getData();
+      loadDropdown();
     });
   </script>
 </body>
