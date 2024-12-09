@@ -144,7 +144,8 @@
     }
 
     .dropdown-content a:hover {
-      background-color: #ddd;    border-radius: 5px;
+      background-color: #ddd;
+      border-radius: 5px;
     }
 
     .dropdown:hover .dropdown-content {
@@ -155,34 +156,123 @@
       background-color: #0056b3;
     }
 
-    .display-container{
+    .display-container {
       text-align: center;
     }
-    .main-container{
+
+    .main-container {
       display: flex;
-    flex-direction: row-reverse;
+      flex-direction: row-reverse;
       text-align: center;
       margin-right: 48px;
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      display: none;
+      /* Hidden by default */
+      z-index: 1000;
+      text-align: center;
+      display: block;
+      justify-items: center;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      /* Hidden by default */
+      z-index: 999;
+    }
+
+    /* Close button */
+    .close-btn {
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 5px;
+      float: right;
+    }
+
+    .close-btn:hover {
+      background: darkred;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
     }
   </style>
 </head>
 
 <body>
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Popup -->
+  <div class="popup" id="popup">
+    <h2>All Restaurants</h2>
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <!-- Add your table headers dynamically -->
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Table data will be added dynamically -->
+      </tbody>
+    </table>
+    <button class="close-btn" id="closePopup">Close</button>
+  </div>
+
+  <!-- Trigger button -->
   <div class="main-container">
-  <div class="dropdown" id="dropdown">
-    <button class="spin-btn" id="dropdownButton">Select Type</button>
-    <div class="dropdown-content" id="dropdownContent">
+    <button class="spin-btn" id="showPopup" style="margin-left: 24px;">Add Data</button>
+    <div class="dropdown" id="dropdown">
+      <button class="spin-btn" id="dropdownButton">Select Type</button>
+      <div class="dropdown-content" id="dropdownContent">
+      </div>
     </div>
   </div>
-</div>
   <div class="wheel-container">
     <div class="pointer"></div>
     <div class="wheel" id="wheel"></div>
   </div>
   <div class="display-container">
-  <button class="spin-btn" id="spinBtn">Spin</button>
-  <div class="result" id="result"></div>
-</div>
+    <button class="spin-btn" id="spinBtn">Spin</button>
+    <div class="result" id="result"></div>
+  </div>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       const wheel = document.getElementById("wheel");
@@ -239,6 +329,7 @@
       }
       document.getElementById('dropdownButton').addEventListener('click', toggleDropdown);
       spinBtn.addEventListener("click", () => {
+        dropdownContent.style.display = "none";
         if (isSpinning) return;
         isSpinning = true;
 
@@ -291,6 +382,75 @@
       }
       getData();
       loadDropdown();
+
+      const popup = document.getElementById("popup");
+      const overlay = document.getElementById("overlay");
+      const showPopupBtn = document.getElementById("showPopup");
+      const closePopupBtn = document.getElementById("closePopup");
+
+      // Show popup
+      showPopupBtn.addEventListener("click", () => {
+        popup.style.display = "block";
+        overlay.style.display = "block";
+        dropdownContent.style.display = "none";
+        fetch('restaurants.json') // Replace 'data.json' with your JSON file URL
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(data => {
+            const table = document.getElementById('dataTable');
+            const thead = table.querySelector('thead tr');
+            const tbody = table.querySelector('tbody');
+            thead.replaceChildren();
+            tbody.replaceChildren();
+            // Get keys for table headers
+            const keys = Object.keys(data.sections[0]);
+
+            // Create table headers
+            keys.forEach(key => {
+              const th = document.createElement('th');
+              if (key === "label")
+                th.textContent = "Hotel";
+              else
+                th.textContent = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize headers
+              thead.appendChild(th);
+            });
+
+            // Add rows to the table
+            data.sections.forEach(item => {
+              const row = document.createElement('tr');
+              keys.forEach(key => {
+                const cell = document.createElement('td');
+                cell.textContent = item[key];
+                row.appendChild(cell);
+              });
+              tbody.appendChild(row);
+            });
+          })
+          .catch(error => {
+            console.error('Error fetching JSON data:', error);
+            alert('Failed to fetch data. Please check the console for details.');
+          });
+      });
+
+      // Close popup
+      closePopupBtn.addEventListener("click", () => {
+        popup.style.display = "none";
+        overlay.style.display = "none";
+        dropdownContent.style.display = "none";
+      });
+
+      // Close popup when clicking outside of it
+      overlay.addEventListener("click", () => {
+        popup.style.display = "none";
+        overlay.style.display = "none";
+        dropdownContent.style.display = "none";
+      });
+
+      closePopupBtn.click();
     });
   </script>
 </body>
