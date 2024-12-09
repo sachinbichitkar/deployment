@@ -1,0 +1,12 @@
+const colors = [
+  "#F1C40F",  // Sunflower Yellow
+  "#E74C3C",  // Crisp Red
+  "#3498DB",  // Bright Blue
+  "#2ECC71",  // Emerald Green
+  "#9B59B6",  // Amethyst Purple
+  "#F39C12",  // Orange
+  "#1ABC9C",  // Turquoise
+  "#16A085",  // Teal
+  "#8E44AD",  // Purple
+  "#ECF0F1"   // Cloud White
+];

@@ -12,6 +12,10 @@
       margin: 0;
       padding: 0;
       background: #f4f4f4;
+      background-image: url('./background.jpg');  /* Set the image URL */
+      background-size: cover;  /* Cover the entire div */
+      background-position: center;  /* Center the image */
+      background-repeat: no-repeat;
     }
 
     .wheel-container {
@@ -19,6 +23,7 @@
       width: 300px;
       height: 300px;
       margin: 50px auto;
+      margin-bottom: 25px;
     }
 
     .wheel {
@@ -30,6 +35,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      opacity: 0.9;
     }
 
     .wheel span {
@@ -43,18 +49,32 @@
     }
 
     .spin-btn {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+  margin-top: 20px;
+  padding: 8px 16px;
+  background: rgba(51, 51, 51, 0.8);  /* Dark background with transparency */
+  color: #fff;  /* White text */
+  border: 2px solid rgba(255, 255, 255, 0.701);  /* Light white border with some transparency */
+  border-radius: 8px;  /* Rounded corners */
+  font-size: 16px;  /* Larger font */
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Subtle shadow */
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;  /* Smooth transitions */
+  cursor: pointer;
+}
 
-    .spin-btn:hover {
-      background: #0056b3;
-    }
+.spin-btn:hover {
+  background: rgba(51, 51, 51, 0.9);  /* Slightly more opaque on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);  /* Stronger shadow on hover */
+  border: 2px solid hsla(0, 0%, 100%, 0.9);  /* Increase border opacity on hover */
+}
+
+.spin-btn:active {
+  background: rgba(51, 51, 51, 1);  /* Fully opaque when clicked */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* Slight shadow on click */
+  border: 2px solid hsla(0, 0%, 100%, 0.9);  /* More pronounced white border on click */
+}
+
+
 
     .pointer {
       position: absolute;
@@ -86,6 +106,7 @@
       margin-top: 20px;
       font-size: 24px;
       font-weight: bold;
+      color: whitesmoke;
     }
   </style>
 </head>
