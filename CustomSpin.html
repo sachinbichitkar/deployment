@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,53 +11,83 @@
       text-align: center;
       margin-top: 50px;
     }
+
     .spinner-container {
       position: relative;
-      width: 320px;
-      height: 320px;
+      width: 360px;
+      height: 360px;
       margin: 0 auto;
     }
+
     .spinner {
-      width: 300px;
-      height: 300px;
+      width: 350px;
+      height: 350px;
       border-radius: 50%;
       position: relative;
       transform: rotate(0deg);
       transition: transform 3s ease-out;
+      will-change: transform;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     }
+
     .slice {
       position: absolute;
-      width: 150px;
-      height: 300px;
+      width: 175px;
+      height: 350px;
       transform-origin: 100% 50%;
       clip-path: polygon(0 0, 100% 50%, 0 100%);
+      border: 1px solid #fff;
     }
+
     .label {
       position: absolute;
-      width: 150px;
-      height: 40px;
+      width: 100px;
+      /* Ensure consistent width */
+      height: auto;
       text-align: center;
-      line-height: 20px;
+      line-height: 1.2;
+      /* Adjust line height for better readability */
       color: white;
       font-weight: bold;
-      transform-origin: 100% 50%;
+      font-size: 12px;
+      transform-origin: 0 50%;
+      /* Align origin to prevent distortions */
       pointer-events: none;
+      z-index: 2;
+      /* Ensure it appears above the slices */
+      background-color: rgba(0, 0, 0, 0.5);
+      /* Semi-transparent background for contrast */
+      border-radius: 4px;
     }
+
+    .centre {
+      z-index: 2;
+      top: 42%;
+      left: calc(50% - 30px);
+      height: 50px;
+      width: 50px;
+      border-radius: 50%;
+      position: absolute;
+      background-color: whitesmoke;
+    }
+
     #pointer {
       position: absolute;
-      top: -15px;
+      top: -20px;
       left: 50%;
       width: 0;
       height: 0;
-      border-left: 15px solid transparent;
-      border-right: 15px solid transparent;
-      border-bottom: 30px solid red;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 40px solid red;
       transform: translateX(-50%);
       z-index: 10;
     }
+
     #spinBtn {
       margin-top: 20px;
-      padding: 10px 20px;
+      padding: 12px 25px;
       font-size: 18px;
       color: white;
       background: #0077b6;
@@ -64,19 +95,24 @@
       border-radius: 5px;
       cursor: pointer;
     }
+
     #spinBtn:hover {
       background: #0096c7;
     }
+
     .result {
       margin-top: 20px;
       font-size: 24px;
       font-weight: bold;
     }
   </style>
+
 </head>
+
 <body>
   <div class="spinner-container">
     <div id="pointer"></div>
+    <div class="centre"></div>
     <div class="spinner" id="spinner"></div>
   </div>
   <button id="spinBtn">Spin</button>
@@ -87,9 +123,7 @@
     const result = document.getElementById("result");
     const spinBtn = document.getElementById("spinBtn");
     let currentRotation = 0;
-    let restaurants = []; // Will store the restaurant data
-
-    // Fetch data from JSON file
+    let restaurants = [];
     fetch("restaurants.json")
       .then(response => response.json())
       .then(data => {
@@ -102,19 +136,31 @@
       const anglePerSlice = 360 / data.length;
 
       data.forEach((item, index) => {
+        // Create a wrapper for slice and label
+        const sliceWrapper = document.createElement("div");
+        sliceWrapper.style.position = "absolute";
+        sliceWrapper.style.width = "100%";
+        sliceWrapper.style.height = "100%";
+        sliceWrapper.style.transform = `rotate(${index * anglePerSlice}deg)`;
+
         // Create slice
         const slice = document.createElement("div");
         slice.className = "slice";
         slice.style.background = item.color;
-        slice.style.transform = `rotate(${index * anglePerSlice}deg)`;
-        spinner.appendChild(slice);
+        slice.style.transform = `rotate(${anglePerSlice / 2}deg)`; // Rotate to align slices
+        sliceWrapper.appendChild(slice);
 
         // Create label
         const label = document.createElement("div");
         label.className = "label";
-        label.style.transform = `rotate(${index * anglePerSlice + anglePerSlice / 2}deg) translate(70px)`;
         label.textContent = item.name;
-        spinner.appendChild(label);
+
+        // Move label outward and rotate it back to stay horizontal
+        //label.style.transform = `translate(165px) rotate(-${anglePerSlice / 2}deg)`; // Adjust translate distance
+        sliceWrapper.appendChild(label);
+
+        // Append wrapper to spinner
+        spinner.appendChild(sliceWrapper);
       });
     }
 
@@ -136,4 +182,5 @@
     });
   </script>
 </body>
+
 </html>
