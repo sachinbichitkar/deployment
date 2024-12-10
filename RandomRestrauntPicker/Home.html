@@ -53,7 +53,7 @@
       background: rgba(51, 51, 51, 0.8);
       color: #fff;
       border: 2px solid rgba(255, 255, 255, 0.701);
-      border-radius: 8px;
+      border-radius: 4px;
       font-size: 16px;
       font-weight: bold;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -171,7 +171,7 @@
       position: fixed;
       top: 50%;
       left: 50%;
-      width: 50%;
+      width: 75%;
       transform: translate(-50%, -50%);
       background: white;
       padding: 20px;
@@ -215,8 +215,8 @@
 
     table {
       width: 100%;
-      border-collapse: collapse;
-      margin: 20px;
+    border-collapse: collapse;
+    margin: 20px 0px;
     }
 
     th,
@@ -229,10 +229,114 @@
     th {
       background-color: #007bff;
       color: white;
+      text-align: center;
     }
 
     tr:nth-child(even) {
       background-color: #f2f2f2;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: space-evenly;
+      width: 190px;
+    }
+
+    .btn {
+      padding: 5px 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .btn-edit {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .btn-edit:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-save {
+      background-color: #28a745;
+      color: white;
+      display: none;
+    }
+
+    .btn-save:hover {
+      background-color: #1e7e34;
+    }
+
+    .btn-delete {
+      background-color: red;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background-color: darkred;
+    }
+
+    .btn-cancel {
+      background-color: #F1C40F;
+      color: white;
+      display: none;
+    }
+
+    .btn-cancel:hover {
+      background-color: rgb(212, 152, 0);
+    }
+
+    .srnocell {
+      text-align: center !important;
+    }
+
+    .input-element {
+      width: calc(100% - 8px);
+    }
+
+    .cell-color {
+      width: 60px;
+    }
+
+    .cell-type {
+      width: 140px;
+    }
+
+    .popup-header {
+      display: flex;
+      justify-content: space-between;
+      align-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .popup-header h2 {
+      margin-top: 8px;
+      margin-bottom: 0;
+    }
+
+    .add-record-btn {
+      background-color: #28a745;
+      color: white;
+      display: none;
+      height: 25px;
+      padding: 5px 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .add-record-btn:hover {
+      background-color: #1e7e34;
+    }
+
+    .table-container{
+      display: block; 
+  max-height: 70vh; 
+  overflow-y: auto; 
+  width: 100%;
     }
   </style>
 </head>
@@ -242,7 +346,11 @@
 
   <!-- Popup -->
   <div class="popup" id="popup">
-    <h2>All Restaurants</h2>
+    <div class="popup-header">
+      <h2>All Restaurants</h2>
+      <button class="add-record-btn" style="display: block;" id="add-row">Add Record</button>
+    </div>
+    <div class="table-container">
     <table id="dataTable">
       <thead>
         <tr>
@@ -253,12 +361,14 @@
         <!-- Table data will be added dynamically -->
       </tbody>
     </table>
+  </div>
     <button class="close-btn" id="closePopup">Close</button>
   </div>
 
   <!-- Trigger button -->
   <div class="main-container">
-    <button class="spin-btn" id="showPopup" style="margin-left: 24px;">Add Data</button>
+    <button class="spin-btn" style="margin-left: 12px;" onclick={window.location.reload()}>Reset</button>
+    <button class="spin-btn" id="showPopup" style="margin-left: 12px;">Edit</button>
     <div class="dropdown" id="dropdown">
       <button class="spin-btn" id="dropdownButton">Select Type</button>
       <div class="dropdown-content" id="dropdownContent">
@@ -279,23 +389,37 @@
       const result = document.getElementById("result");
       const spinBtn = document.getElementById("spinBtn");
       let isSpinning = false;
+      let JSONDATA;
       let currentRotation = 0;
 
       function toggleDropdown() {
         const dropdownContent = document.getElementById('dropdownContent');
         dropdownContent.style.display = dropdownContent.style.display === "block" ? "none" : "block";
       }
+
+      function loadData() {
+        fetch("restaurants.json")
+          .then((response) => response.json())
+          .then((data) => {
+            JSONDATA = data.sections;
+          })
+          .catch((error) => {
+            console.error("Error loading JSON data:", error);
+            alert("Failed to load wheel data.");
+          });
+      }
       function getData(type) {
         fetch("restaurants.json")
           .then((response) => response.json())
           .then((data) => {
+            let JSON_DATA = JSON.parse(JSON.stringify(JSONDATA));
             if (type) {
               if (type && (type === "All")) {
 
               } else
-                data.sections = data.sections.filter(option => option.type === type);
+                JSON_DATA = JSON_DATA.filter(option => option.type === type);
             }
-            const sections = data.sections;
+            const sections = JSON_DATA;
 
             if (!sections || sections.length === 0) {
               alert("No data found in JSON!");
@@ -356,8 +480,9 @@
         fetch("restaurants.json")
           .then((response) => response.json())
           .then((data) => {
+            let sectionList = JSON.parse(JSON.stringify(JSONDATA));
             const sections = Array.from(
-              new Map(data.sections.map(option => [option.type, option])).values()
+              new Map(sectionList.map(option => [option.type, option])).values()
             );
             if (!sections || sections.length === 0) {
               alert("No data found in JSON!");
@@ -380,6 +505,7 @@
             alert("Failed to load wheel data.");
           });
       }
+      loadData();
       getData();
       loadDropdown();
 
@@ -401,34 +527,71 @@
             return response.json();
           })
           .then(data => {
+            let sectionList = JSON.parse(JSON.stringify(JSONDATA));
             const table = document.getElementById('dataTable');
             const thead = table.querySelector('thead tr');
             const tbody = table.querySelector('tbody');
             thead.replaceChildren();
             tbody.replaceChildren();
             // Get keys for table headers
-            const keys = Object.keys(data.sections[0]);
+            const keys = Object.keys(sectionList[0]);
 
             // Create table headers
             keys.forEach(key => {
               const th = document.createElement('th');
               if (key === "label")
                 th.textContent = "Hotel";
+              else if (key === "rowId") {
+                th.textContent = "Sr.No.";
+                th.style.className = "srnocell";
+              }
               else
                 th.textContent = key.charAt(0).toUpperCase() + key.slice(1); // Capitalize headers
-              thead.appendChild(th);
+              th.classList.add(`cell-${key}`);
+              if (key != "rowId")
+                thead.appendChild(th);
             });
+            const thaction = document.createElement('th');
+            thaction.textContent = "Action";
+            thaction.style.width = "0";
+            thead.appendChild(thaction);
 
             // Add rows to the table
-            data.sections.forEach(item => {
+            sectionList.forEach(item => {
               const row = document.createElement('tr');
               keys.forEach(key => {
                 const cell = document.createElement('td');
-                cell.textContent = item[key];
-                row.appendChild(cell);
+                if (key === 'color') {
+                  cell.innerHTML = `<div style="background-color:${item[key]};height:20px;width:40px;justify-self: center;"></div>`;
+                  //cell.style.display = "flex";
+                  cell.style.justifyContent = "center";
+                  //cell.style.height = "100%";
+                }
+                else if (key === 'rowId' || key === 'type') {
+                  cell.style.textAlign = "center";
+                  cell.textContent = item[key];
+                }
+                else
+                  cell.textContent = item[key];
+
+                cell.id = `${key}-${item.rowId}`;
+                cell.classList.add(`cell-${key}`);
+                if (key != "rowId")
+                  row.appendChild(cell);
               });
+              const actioncell = document.createElement('td');
+              actioncell.innerHTML = `<div class="action-buttons">
+                <button class="btn btn-cancel" id="cancel-btn-${item.rowId}" data-id=${item.rowId}>Cancel</button>
+            <button class="btn btn-edit" id="edit-btn-${item.rowId}" data-id=${item.rowId}>Edit</button>
+            <button class="btn btn-save" id="save-btn-${item.rowId}" data-id=${item.rowId}>Save</button>
+            <button class="btn btn-delete" id="delete-btn-${item.rowId}" data-id=${item.rowId}>Delete</button>
+          </div>`;
+              actioncell.style.width = "";
+              row.appendChild(actioncell);
+              row.id = `row-${item.rowId}`;
               tbody.appendChild(row);
             });
+
           })
           .catch(error => {
             console.error('Error fetching JSON data:', error);
@@ -441,6 +604,7 @@
         popup.style.display = "none";
         overlay.style.display = "none";
         dropdownContent.style.display = "none";
+        getData("All");
       });
 
       // Close popup when clicking outside of it
@@ -451,6 +615,110 @@
       });
 
       closePopupBtn.click();
+
+      document.getElementById("add-row").addEventListener("click", (event) => {
+        const colors = [
+          "#F1C40F",  // Sunflower Yellow
+          "#E74C3C",  // Crisp Red
+          "#3498DB",  // Bright Blue
+          "#2ECC71",  // Emerald Green
+          "#9B59B6",  // Amethyst Purple
+          "#F39C12",  // Orange
+          "#1ABC9C",  // Turquoise
+          "#16A085",  // Teal
+          "#8E44AD",  // Purple
+          "#ECF0F1"   // Cloud White
+        ];
+        if((!JSONDATA[0].label) || (JSONDATA[0].label === null || JSONDATA[0].label === undefined || JSONDATA[0].label.trim() === "")){
+          alert('Edit blank record first.');
+          return;
+        }
+        JSONDATA.unshift({
+          "rowId": JSONDATA.length + 1,
+          "label": "",
+          "type": "Veg",
+          "color": colors[(JSONDATA.length + 1) % 10]
+        });
+        let dataId = JSONDATA[0].rowId;
+        showPopupBtn.click();
+        setTimeout(() => {
+          const editBtn = document.getElementById(`edit-btn-${dataId}`);
+          const cancelBtn = document.getElementById(`cancel-btn-${dataId}`);
+          const saveBtn = document.getElementById(`save-btn-${dataId}`);
+          cancelBtn.style.display = "block";
+          saveBtn.style.display = "block";
+          editBtn.style.display = "none";
+          const label = document.getElementById(`label-${dataId}`);
+          const type = document.getElementById(`type-${dataId}`);
+          const inputElement = document.createElement('input');
+          inputElement.id = `input-${dataId}`;
+          inputElement.classList.add('input-element');
+          inputElement.value = label.innerHTML;
+          label.innerHTML = "";
+          label.appendChild(inputElement);
+          console.log("Row edited:", label);
+}, 200);
+        
+      });
+
+      document.getElementById("dataTable").addEventListener("click", (event) => {
+        if (event.target.classList.contains("btn-delete")) {
+          if (JSONDATA && JSONDATA.length < 2) {
+            alert('Can not delete last records.');
+            return;
+          }
+          const dataId = event.target.dataset.id;
+          JSONDATA = JSONDATA.filter(item => item.rowId != dataId);
+          console.log("Row deleted:", dataId, JSONDATA);
+          showPopupBtn.click();
+        }
+        else if (event.target.classList.contains("btn-edit")) {
+          const dataId = event.target.dataset.id;
+          const editBtn = document.getElementById(`edit-btn-${dataId}`);
+          const cancelBtn = document.getElementById(`cancel-btn-${dataId}`);
+          const saveBtn = document.getElementById(`save-btn-${dataId}`);
+          cancelBtn.style.display = "block";
+          saveBtn.style.display = "block";
+          editBtn.style.display = "none";
+          const label = document.getElementById(`label-${dataId}`);
+          const type = document.getElementById(`type-${dataId}`);
+          const inputElement = document.createElement('input');
+          inputElement.id = `input-${dataId}`;
+          inputElement.classList.add('input-element');
+          inputElement.value = label.innerHTML;
+          label.innerHTML = "";
+          label.appendChild(inputElement);
+          console.log("Row edited:", label);
+        }
+        else if (event.target.classList.contains("btn-save")) {
+          const dataId = event.target.dataset.id;
+          const editBtn = document.getElementById(`edit-btn-${dataId}`);
+          const cancelBtn = document.getElementById(`cancel-btn-${dataId}`);
+          const saveBtn = document.getElementById(`save-btn-${dataId}`);
+          cancelBtn.style.display = "none";
+          saveBtn.style.display = "none";
+          editBtn.style.display = "block";
+          const label = document.getElementById(`label-${dataId}`);
+          const inputElement = document.getElementById(`input-${dataId}`);
+          label.replaceChildren();
+          label.innerHTML = inputElement.value;
+          let dataelement = JSONDATA.filter(x => x.rowId == dataId);
+          dataelement[0].label = label.innerHTML;
+        }
+        else if (event.target.classList.contains("btn-cancel")) {
+          const dataId = event.target.dataset.id;
+          const editBtn = document.getElementById(`edit-btn-${dataId}`);
+          const cancelBtn = document.getElementById(`cancel-btn-${dataId}`);
+          const saveBtn = document.getElementById(`save-btn-${dataId}`);
+          cancelBtn.style.display = "none";
+          saveBtn.style.display = "none";
+          editBtn.style.display = "block";
+          let dataelement = JSONDATA.filter(x => x.rowId == dataId);
+          const label = document.getElementById(`label-${dataId}`);
+          label.replaceChildren();
+          label.innerHTML = dataelement[0].label;
+        }
+      });
     });
   </script>
 </body>
