@@ -4,14 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Jackpot Wheel</title>
+  <title>Random Restraunt Picker</title>
   <style>
-    /* For devices with a max width of 768px */
-    @media screen and (max-width: 768px) {
-      body {
-        background-color: red;
-      }
-    }
 
     body {
       font-family: Arial, sans-serif;
@@ -308,7 +302,7 @@
     }
 
     .cell-type {
-      width: 140px;
+      width: 160px;
     }
 
     .popup-header {
@@ -344,6 +338,17 @@
       max-height: 70vh;
       overflow-y: auto;
       width: 100%;
+    }
+    
+    @media screen and (max-width: 768px) {
+      .action-buttons{
+        flex-direction: column;
+        width: 60px;
+      }
+
+      .cell-color{
+        display: none;
+      }
     }
   </style>
 </head>
@@ -689,13 +694,48 @@
           saveBtn.style.display = "block";
           editBtn.style.display = "none";
           const label = document.getElementById(`label-${dataId}`);
-          const type = document.getElementById(`type-${dataId}`);
           const inputElement = document.createElement('input');
           inputElement.id = `input-${dataId}`;
           inputElement.classList.add('input-element');
           inputElement.value = label.innerHTML;
           label.innerHTML = "";
           label.appendChild(inputElement);
+
+          const type = document.getElementById(`type-${dataId}`);
+let selectedType = JSONDATA.filter(x=>x.rowId == dataId)[0].type;
+// Clear existing children if any
+type.innerHTML = "";
+
+// Create a label and radio button for "Veg"
+const vegLabel = document.createElement("label");
+vegLabel.textContent = "Veg";
+vegLabel.style.marginRight = "10px";
+
+const vegRadio = document.createElement("input");
+vegRadio.type = "radio";
+vegRadio.name = `type-${dataId}`; // Name must be the same for grouping
+vegRadio.value = "Veg";
+
+// Create a label and radio button for "Non-Veg"
+const nonVegLabel = document.createElement("label");
+nonVegLabel.textContent = "Non-Veg";
+nonVegLabel.style.marginRight = "10px";
+
+const nonVegRadio = document.createElement("input");
+nonVegRadio.type = "radio";
+nonVegRadio.name = `type-${dataId}`; // Name must be the same for grouping
+nonVegRadio.value = "Non-Veg";
+if (selectedType === "Veg") {
+  vegRadio.checked = true;
+}else if (selectedType === "Non-Veg") {
+  nonVegRadio.checked = true;
+}
+// Append radio buttons and labels to the type container
+vegLabel.prepend(vegRadio);
+nonVegLabel.prepend(nonVegRadio);
+type.appendChild(vegLabel);
+type.appendChild(nonVegLabel);
+type.classList.add('radio-buttons')
           console.log("Row edited:", label);
         }
         else if (event.target.classList.contains("btn-save")) {
@@ -709,9 +749,15 @@
           const label = document.getElementById(`label-${dataId}`);
           const inputElement = document.getElementById(`input-${dataId}`);
           label.replaceChildren();
+          
           label.innerHTML = inputElement.value;
           let dataelement = JSONDATA.filter(x => x.rowId == dataId);
           dataelement[0].label = label.innerHTML;
+          dataelement[0].type = document.querySelector(`input[name="type-${dataId}"]:checked`)?.value;
+
+          const type = document.getElementById(`type-${dataId}`);
+          type.replaceChildren();
+          type.innerHTML = dataelement[0].type;
         }
         else if (event.target.classList.contains("btn-cancel")) {
           const dataId = event.target.dataset.id;
@@ -725,6 +771,9 @@
           const label = document.getElementById(`label-${dataId}`);
           label.replaceChildren();
           label.innerHTML = dataelement[0].label;
+          const type = document.getElementById(`type-${dataId}`);
+          type.replaceChildren();
+          type.innerHTML = dataelement[0].type;
         }
       });
     });
