@@ -339,15 +339,19 @@
       overflow-y: auto;
       width: 100%;
     }
-    
+
     @media screen and (max-width: 768px) {
-      .action-buttons{
+      .action-buttons {
         flex-direction: column;
         width: 60px;
       }
 
-      .cell-color{
+      .cell-color {
         display: none;
+      }
+
+      .cell-type {
+        width: 60px;
       }
     }
   </style>
@@ -650,7 +654,7 @@
           "rowId": JSONDATA.length + 1,
           "label": "",
           "type": "Veg",
-          "color": colors[(JSONDATA.length + 1) % 10]
+          "color": colors[(JSONDATA.length + 2) % 10]
         });
         let dataId = JSONDATA[0].rowId;
         showPopupBtn.click();
@@ -702,40 +706,40 @@
           label.appendChild(inputElement);
 
           const type = document.getElementById(`type-${dataId}`);
-let selectedType = JSONDATA.filter(x=>x.rowId == dataId)[0].type;
-// Clear existing children if any
-type.innerHTML = "";
+          let selectedType = JSONDATA.filter(x => x.rowId == dataId)[0].type;
+          // Clear existing children if any
+          type.innerHTML = "";
 
-// Create a label and radio button for "Veg"
-const vegLabel = document.createElement("label");
-vegLabel.textContent = "Veg";
-vegLabel.style.marginRight = "10px";
+          // Create a label and radio button for "Veg"
+          const vegLabel = document.createElement("label");
+          vegLabel.textContent = "Veg";
+          vegLabel.style.marginRight = "10px";
 
-const vegRadio = document.createElement("input");
-vegRadio.type = "radio";
-vegRadio.name = `type-${dataId}`; // Name must be the same for grouping
-vegRadio.value = "Veg";
+          const vegRadio = document.createElement("input");
+          vegRadio.type = "radio";
+          vegRadio.name = `type-${dataId}`; // Name must be the same for grouping
+          vegRadio.value = "Veg";
 
-// Create a label and radio button for "Non-Veg"
-const nonVegLabel = document.createElement("label");
-nonVegLabel.textContent = "Non-Veg";
-nonVegLabel.style.marginRight = "10px";
+          // Create a label and radio button for "Non-Veg"
+          const nonVegLabel = document.createElement("label");
+          nonVegLabel.textContent = "Non-Veg";
+          nonVegLabel.style.marginRight = "10px";
 
-const nonVegRadio = document.createElement("input");
-nonVegRadio.type = "radio";
-nonVegRadio.name = `type-${dataId}`; // Name must be the same for grouping
-nonVegRadio.value = "Non-Veg";
-if (selectedType === "Veg") {
-  vegRadio.checked = true;
-}else if (selectedType === "Non-Veg") {
-  nonVegRadio.checked = true;
-}
-// Append radio buttons and labels to the type container
-vegLabel.prepend(vegRadio);
-nonVegLabel.prepend(nonVegRadio);
-type.appendChild(vegLabel);
-type.appendChild(nonVegLabel);
-type.classList.add('radio-buttons')
+          const nonVegRadio = document.createElement("input");
+          nonVegRadio.type = "radio";
+          nonVegRadio.name = `type-${dataId}`; // Name must be the same for grouping
+          nonVegRadio.value = "Non-Veg";
+          if (selectedType === "Veg") {
+            vegRadio.checked = true;
+          } else if (selectedType === "Non-Veg") {
+            nonVegRadio.checked = true;
+          }
+          // Append radio buttons and labels to the type container
+          vegLabel.prepend(vegRadio);
+          nonVegLabel.prepend(nonVegRadio);
+          type.appendChild(vegLabel);
+          type.appendChild(nonVegLabel);
+          type.classList.add('radio-buttons')
           console.log("Row edited:", label);
         }
         else if (event.target.classList.contains("btn-save")) {
@@ -749,7 +753,7 @@ type.classList.add('radio-buttons')
           const label = document.getElementById(`label-${dataId}`);
           const inputElement = document.getElementById(`input-${dataId}`);
           label.replaceChildren();
-          
+
           label.innerHTML = inputElement.value;
           let dataelement = JSONDATA.filter(x => x.rowId == dataId);
           dataelement[0].label = label.innerHTML;
