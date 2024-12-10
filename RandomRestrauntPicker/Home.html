@@ -6,6 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dynamic Jackpot Wheel</title>
   <style>
+    /* For devices with a max width of 768px */
+    @media screen and (max-width: 768px) {
+      body {
+        background-color: red;
+      }
+    }
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -215,8 +222,8 @@
 
     table {
       width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0px;
+      border-collapse: collapse;
+      margin: 20px 0px;
     }
 
     th,
@@ -332,11 +339,11 @@
       background-color: #1e7e34;
     }
 
-    .table-container{
-      display: block; 
-  max-height: 70vh; 
-  overflow-y: auto; 
-  width: 100%;
+    .table-container {
+      display: block;
+      max-height: 70vh;
+      overflow-y: auto;
+      width: 100%;
     }
   </style>
 </head>
@@ -351,17 +358,17 @@
       <button class="add-record-btn" style="display: block;" id="add-row">Add Record</button>
     </div>
     <div class="table-container">
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <!-- Add your table headers dynamically -->
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Table data will be added dynamically -->
-      </tbody>
-    </table>
-  </div>
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <!-- Add your table headers dynamically -->
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table data will be added dynamically -->
+        </tbody>
+      </table>
+    </div>
     <button class="close-btn" id="closePopup">Close</button>
   </div>
 
@@ -612,6 +619,7 @@
         popup.style.display = "none";
         overlay.style.display = "none";
         dropdownContent.style.display = "none";
+        getData("All");
       });
 
       closePopupBtn.click();
@@ -629,7 +637,7 @@
           "#8E44AD",  // Purple
           "#ECF0F1"   // Cloud White
         ];
-        if((!JSONDATA[0].label) || (JSONDATA[0].label === null || JSONDATA[0].label === undefined || JSONDATA[0].label.trim() === "")){
+        if ((!JSONDATA[0].label) || (JSONDATA[0].label === null || JSONDATA[0].label === undefined || JSONDATA[0].label.trim() === "")) {
           alert('Edit blank record first.');
           return;
         }
@@ -657,8 +665,8 @@
           label.innerHTML = "";
           label.appendChild(inputElement);
           console.log("Row edited:", label);
-}, 200);
-        
+        }, 200);
+
       });
 
       document.getElementById("dataTable").addEventListener("click", (event) => {
