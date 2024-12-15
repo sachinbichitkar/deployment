@@ -1,0 +1,10 @@
+:root {
+   /* --parent-selected-bg: #7eb3dd;*/
+    --parent-selected-color: white;
+  }
+  
+  .ant-menu-submenu-selected > .ant-menu-submenu-title {
+   /* background-color: var(--parent-selected-bg) !important;*/
+    color: var(--parent-selected-color) !important;
+  }
+  

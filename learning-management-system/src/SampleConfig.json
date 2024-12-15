@@ -1,0 +1,59 @@
+{
+  "THEMEOBJ": {
+    "cssVar": {},
+    "components": {
+      "Menu": {
+        "itemSelectedColor":"white",
+        "itemBorderRadius": "0px",
+        "itemSelectedBg": "#7eb3dd", 
+        "itemActiveBg": "#7eb3dd", 
+        "parentSelectedColor": "#7eb3dd"
+      },
+      "Button": {
+        "borderRadius":2
+      },
+      "Table":{
+        "borderRadius":2,
+        "headerBorderRadius":2,
+        "itemBorderRadius":2
+      }
+    },
+    "token": {
+      "colorPrimary": "#7eb3dd",
+      "colorLink:":"#7eb3dd",
+      "colorLinkActive":"#7eb3dd",
+      "colorLinkHover":"#7eb3dd"
+    }
+  },
+  "URL":{
+    
+    "AddUser": "http://localhost:7182/api/AddUser",
+
+    "AssignRole": "http://localhost:7182/api/AssignRole",
+
+    "DeleteUser": "http://localhost:7182/api/DeleteUser",
+
+    "EditUser": "http://localhost:7182/api/EditUser",
+
+    "GetAdminDashboardData": "http://localhost:7182/api/GetAdminDashboardData",
+
+    "GetAllRoles": "http://localhost:7182/api/GetAllRoles",
+
+    "GetAllUsers": "http://localhost:7182/api/GetAllUsers",
+
+    "GetRolePermission": "http://localhost:7182/api/GetRolePermission",
+
+    "GetUserById": "http://localhost:7182/api/GetUserById",
+
+    "Login": "http://localhost:7182/api/Login",
+
+    "SelectRole": "http://localhost:7182/api/SelectRole",
+
+    "SetRolePermission": "http://localhost:7182/api/SetRolePermission"
+  },
+  "Entities":{
+    "USER":"USER",
+    "PERMISSION":"PERMISSION",
+    "DASHBOARD":"DASHBOARD"
+  }
+}
